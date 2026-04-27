@@ -11,7 +11,7 @@ if "GEMINI_API_KEY" not in st.secrets:
     st.stop()
 
 # APIキー設定
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"], transport='rest')
 
 # キャラ設定
 instruction = "あなたはバドミントンの3級公認審判員、兼コーチです。専門用語を使って親切に答えてください。"
