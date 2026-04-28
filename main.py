@@ -1,19 +1,31 @@
 import streamlit as st
 import google.generativeai as genai
+from google.generativeai import client # これを追加
 
 st.set_page_config(page_title="Badminton AI Coach", page_icon="🏸")
 st.title("🏸 バドミントンAIアドバイザー")
 
-# Secretsから読み込み
 if "GEMINI_API_KEY" not in st.secrets:
-    st.error("SecretsにAPIキーを設定してください")
+    st.error("SecretsにGEMINI_API_KEYが設定されていません。")
     st.stop()
 
+# API設定
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
-# 最も標準的な設定
-model = genai.GenerativeModel('gemini-1.5-flash')
+# ★【最重要】ライブラリのバグを回避するため、APIバージョンを「v1」に固定
+# これにより、エラーに出ていた v1beta を強制的にスキップします
+my_client = client.get_default_generative_client(version='v1')
 
+try:
+    model = genai.GenerativeModel(
+        model_name='gemini-1.5-flash',
+        system_instruction="あなたはバドミントンの3級公認審判員、兼コーチです。"
+    )
+except Exception as e:
+    st.error(f"初期化失敗: {e}")
+    st.stop()
+
+# --- チャット履歴管理 ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -28,9 +40,10 @@ if prompt := st.chat_input("質問をどうぞ"):
 
     with st.chat_message("assistant"):
         try:
-            # 標準的な生成（余計なオプションなし）
-            response = model.generate_content(prompt)
-            st.markdown(response.text)
-            st.session_state.messages.append({"role": "assistant", "content": response.text})
+            # ★ ここでも client を指定して、v1 で通信させる
+            response = model.generate_content(prompt, client=my_client)
+            if response.text:
+                st.markdown(response.text)
+                st.session_state.messages.append({"role": "assistant", "content": response.text})
         except Exception as e:
             st.error(f"エラー詳細: {e}")
