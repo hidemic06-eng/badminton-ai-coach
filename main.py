@@ -2,6 +2,9 @@ import streamlit as st
 import google.generativeai as genai
 
 st.write(f"SDK Version: {genai.__version__}")
+# Secretsが本当に更新されているか、末尾3文字だけ確認する
+key = st.secrets["GEMINI_API_KEY"]
+st.write(f"現在使用中のキー（末尾3文字）: ***{key[-3:]}")
 
 # 1. ページ設定
 st.set_page_config(page_title="Badminton AI Coach", page_icon="🏸")
