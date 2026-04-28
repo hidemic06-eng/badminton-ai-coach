@@ -22,7 +22,7 @@ genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 try:
     # モデル名の前に 'models/' を付けるのが、実は今の公式の推奨です
     model = genai.GenerativeModel(
-        model_name='models/gemini-1.5-flash',
+        model_name='models/gemini-1.5-flash-latest',
         system_instruction="あなたはバドミントンの3級公認審判員、兼コーチです。専門用語を使って親切に答えてください。"
     )
 except Exception as e:
