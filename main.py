@@ -1,6 +1,8 @@
 import streamlit as st
 import google.generativeai as genai
 
+st.write(f"SDK Version: {genai.__version__}")
+
 # 1. ページ設定
 st.set_page_config(page_title="Badminton AI Coach", page_icon="🏸")
 st.title("🏸 バドミントンAIアドバイザー")
